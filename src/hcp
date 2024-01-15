@@ -1,0 +1,72 @@
+#!/usr/bin/python3
+import os
+import sys
+import shutil
+import logging
+from pathlib import Path
+from rich.console import Console
+from rich.logging import RichHandler
+from rich.progress import Progress
+
+# Set Console style
+console = Console()
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler(console=console, markup=True)],
+)
+
+def get_formatted_size(file_path):
+    size = os.path.getsize(file_path)
+    units = ['B', 'KB', 'MB', 'GB', 'TB']
+
+    unit_index = 0
+    while size >= 1024 and unit_index < len(units) - 1:
+        size /= 1024.0
+        unit_index += 1
+
+    return f"{size:.2f} {units[unit_index]}"
+
+def copy_file(src, dst):
+    if os.path.isdir(dst):
+        dst = os.path.join(dst, Path(src).name)
+
+    with Progress() as progress:
+
+        file_size = get_formatted_size(src)
+        task_desc = f"[cyan]\[COPY]\[{file_size}]" + Path(src).name
+        task = progress.add_task(task_desc, total=shutil.os.path.getsize(src) + 1)
+
+        with open(src, 'rb') as src_file, open(dst, 'wb') as dst_file:
+            while True:
+                buf = src_file.read(1024)
+                if not buf:
+                    break
+                dst_file.write(buf)
+                progress.update(task, advance=len(buf))
+
+def copy_dir(src, dst):
+    for root, dirs, files in os.walk(src):
+        relative_path = os.path.relpath(root, src)
+        dest_root = os.path.join(dst, relative_path)
+        logger.info(f"C {dest_root}")
+        os.makedirs(dest_root, exist_ok=True)
+        for file in files:
+            src_file_path = os.path.join(root, file)
+            dest_file_path = os.path.join(dest_root, file)
+            copy_file(src_file_path, dest_file_path)
+
+if __name__ == "__main__":
+    logger = logging.getLogger(__name__)
+    if len(sys.argv) < 2:
+        logger.error("Hcp [SourcePath] [TargetPath]")
+        sys.exit()
+
+    if os.path.isfile(sys.argv[1]):
+        copy_file(sys.argv[1], sys.argv[2])
+        logger.info("Done.")
+        sys.exit()
+    
+    if os.path.isdir(sys.argv[1]):
+        copy_dir(sys.argv[1], sys.argv[2])
