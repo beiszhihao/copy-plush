@@ -36,7 +36,7 @@ def copy_file(src, dst):
 
         file_size = get_formatted_size(src)
         task_desc = f"[cyan]\[COPY]\[{file_size}]" + Path(src).name
-        task = progress.add_task(task_desc, total=shutil.os.path.getsize(src) + 1)
+        task = progress.add_task(task_desc, total=shutil.os.path.getsize(src))
 
         with open(src, 'rb') as src_file, open(dst, 'wb') as dst_file:
             while True:
