@@ -5,13 +5,13 @@ To avoid aimless waiting and waiting without feedback, as you know, waiting with
 That's why `copy plus` was born, and its significance lies in providing feedback on waiting. During the waiting period, you can know the progress and arrive at the destination appropriately, without blindly waiting.
 
 ## Let's take a look at what its feedback looks like
-copy file
+### Copy File
 ```bash
 stephen@ubuntu:~/my_work/copy-plush/src$ ./hcp ~/mysql-connector-java-8.0.19.zip ~
 [COPY][4.41 MB]mysql-connector-java-8.0.19.zip ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╸ 100% 0:00:00
 [21:56:41] INFO     Done.                
 ```
-copy folder
+### Copy Folder
 ```bash
 [21:58:41] INFO     C test1/.            
 [COPY][4.41 MB]mysql-connector-java-8.0.19.zip ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╸ 100% 0:00:00
